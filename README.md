@@ -1,2 +1,2 @@
-# exam_hall_system
-This is a system for allocating halls for students writing examination.
+# Exam Hall Management System
+This is a system for allocating halls for students writing examinations.
