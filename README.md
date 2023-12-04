@@ -1,2 +1,2 @@
 # Exam Hall Management System
-This is a system for allocating halls for students writing examinations.
+This is an automated system for allocating halls for students writing examinations.
