@@ -1,11 +1,11 @@
 # Exam Hall Management System
 This is an automated system for allocating halls for students writing examinations.
-It is built with built with Python programming language with and Django Framework. This project aims to manage and organize student information for exam halls efficiently.
+It is built with built with Python programming language and Django Framework. This project aims to manage and organize student information for exam halls efficiently.
 
 ## Requirements
 To run this project, you need the following:
 
-Windows 10 or higher Operating System, or Linux Operating System that runs python 3.8 or above    
+**Windows 10** or higher Operating System, Linux Operating System that runs **Python 3.8** or above or **MacOS**    
 Python 3.7+ installed on your system.
 Django 4.0.0 or a more latest version.
 
