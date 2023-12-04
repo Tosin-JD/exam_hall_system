@@ -5,7 +5,7 @@ It is built with built with Python programming language and Django Framework. Th
 ## Requirements
 To run this project, you need the following:
 
-**Windows 10** or higher Operating System, Linux Operating System that runs **Python 3.8** or above or **MacOS**    
+**Windows 10** or higher Operating System, **Linux** Operating System that runs **Python 3.8** or above or **MacOS**    
 Python 3.7+ installed on your system.
 Django 4.0.0 or a more latest version.
 
