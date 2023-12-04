@@ -8,6 +8,25 @@ To run this project, you need the following:
 Python 3.7+ installed on your system.
 Django 4.0.0 or a more latest version.
 
+## How To Install
+1. Install Python on your system.
+2. Create a virtual environment with the following code on your command line:
+   Linux:
+   `python3 -m venv env`
+3. Activate the virtual environment
+   Linux:
+  `source env/bin/activate`
+   Windows:
+   `.\env\Scripts\activate`
+4. Install Django
+   `pip install django`
+5. change directory to the folder directory:
+   `cd exam_hall_system`
+6. run the server from the command line
+   `python manage.py runserver`
+7. Open a browser to view the project on this URL:
+   `127.0.0.1:8000`
+
 ## Features
 Features will be update soon
 
@@ -17,5 +36,5 @@ Contributions to this project are welcome! If you have any ideas for improvement
 ## Acknowledment
 We want to acknowledge the following resources and libraries that were used in the development of this project:
 
-Python (https://www.python.org)
+Python (https://www.python.org)  
 Tkinter (https://docs.python.org/3/library/tkinter.html)
