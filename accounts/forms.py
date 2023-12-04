@@ -10,10 +10,10 @@ from accounts.models import CustomUser, Student, Invigilator
 class StudentCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Student
-        fields = UserCreationForm.Meta.fields
+        fields = UserCreationForm.Meta.fields + ("first_name", "middle_name", "last_name", "date_of_birth")
         
         
 class InvigilatorCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Invigilator
-        fields = UserCreationForm.Meta.fields
+        fields = UserCreationForm.Meta.fields + ("first_name", "middle_name", "last_name", "date_of_birth")
