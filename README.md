@@ -10,21 +10,25 @@ Django 4.0.0 or a more latest version.
 
 ## How To Install
 1. Install Python on your system.
-2. Create a virtual environment with the following code on your command line:
-   Linux:
+2. Create a virtual environment with the following code on your command line:  
+   **Linux**:  
    `python3 -m venv env`
-3. Activate the virtual environment
+   **Windows** on cmd:  
+   `py -m venv env`
+   or on powershell
+   `python -m venv env`
+4. Activate the virtual environment
    Linux:
   `source env/bin/activate`
    Windows:
    `.\env\Scripts\activate`
-4. Install Django
+5. Install Django
    `pip install django`
-5. change directory to the folder directory:
+6. change directory to the folder directory:
    `cd exam_hall_system`
-6. run the server from the command line
+7. run the server from the command line
    `python manage.py runserver`
-7. Open a browser to view the project on this URL:
+8. Open a browser to view the project on this URL:
    `127.0.0.1:8000`
 
 ## Features
