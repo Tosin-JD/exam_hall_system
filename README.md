@@ -5,6 +5,7 @@ It is built with built with Python programming language with and Django Framewor
 ## Requirements
 To run this project, you need the following:
 
+Windows 10 or higher Operating System, or Linux Operating System that runs python 3.8 or above    
 Python 3.7+ installed on your system.
 Django 4.0.0 or a more latest version.
 
@@ -12,24 +13,24 @@ Django 4.0.0 or a more latest version.
 1. Install Python on your system.
 2. Create a virtual environment with the following code on your command line:  
    **Linux**:  
-   `python3 -m venv env`
-   **Windows** on cmd:  
-   `py -m venv env`
-   or on powershell
-   `python -m venv env`
-4. Activate the virtual environment
-   Linux:
-  `source env/bin/activate`
-   Windows:
-   `.\env\Scripts\activate`
-5. Install Django
-   `pip install django`
-6. change directory to the folder directory:
-   `cd exam_hall_system`
-7. run the server from the command line
-   `python manage.py runserver`
-8. Open a browser to view the project on this URL:
-   `127.0.0.1:8000`
+   `python3 -m venv env`  
+   **Windows** on cmd:    
+   `py -m venv env`  
+   or on powershell  
+   `python -m venv env`  
+4. Activate the virtual environment  
+   **Linux**:  
+  `source env/bin/activate`  
+   **Windows**:  
+   `.\env\Scripts\activate`  
+5. Install Django  
+   `pip install django`   
+6. change directory to the folder directory:  
+   `cd exam_hall_system`  
+7. run the server from the command line  
+   `python manage.py runserver`  
+8. Open a browser to view the project on this URL:  
+   `127.0.0.1:8000`  
 
 ## Features
 Features will be update soon
