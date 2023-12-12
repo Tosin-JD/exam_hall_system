@@ -138,4 +138,11 @@ LOGOUT_REDIRECT_URL = '/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
+DATE_INPUT_FORMATS = ('%Y-%m-%d','%d-%m-%Y')
+
+
+
 
