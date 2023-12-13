@@ -42,4 +42,4 @@ Contributions to this project are welcome! If you have any ideas for improvement
 We want to acknowledge the following resources and libraries that were used in the development of this project:
 
 Python (https://www.python.org)  
-Tkinter (https://docs.python.org/3/library/tkinter.html)
+Django (https://docs.djangoproject.com/)
