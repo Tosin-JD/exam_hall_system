@@ -13,6 +13,13 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 
 # Create your views here.
 
+
+
+
+from django.http import HttpResponse
+from .models import assign_students_to_seats
+
+
 class IndexView(TemplateView):
     template_name = 'index.html'
     
@@ -55,4 +62,9 @@ class HallCreateView(CreateView):
     model = Hall
     form_class = HallForm
     template_name = 'create_hall.html'
-    success_url = reverse_lazy('hall_list')  # Add a URL pattern for listing halls
+    success_url = reverse_lazy('hall_list')
+    
+
+def assign_students_to_seats_view(request, course_code):
+    assign_students_to_seats(course_code)
+    return HttpResponse(f"Students assigned to seats for course with code: {course_code}")

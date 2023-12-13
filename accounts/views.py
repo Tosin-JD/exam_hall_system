@@ -17,6 +17,7 @@ from .models import Student, Invigilator, Profile
 from django.contrib.auth import logout
 
 
+
 def logout_view(request):
     logout(request)
     return redirect('index')
@@ -32,10 +33,8 @@ class StudentSignUpView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        # Assuming your Student model has a slug field
-        slug = self.object.customuser.slug
-        self.success_url = reverse_lazy('accounts:student_profile', 
-                                        kwargs={'slug': slug})
+        slug = self.object.slug
+        self.success_url = reverse_lazy('accounts:student_profile', kwargs={'slug': slug})
         return response
     
     
@@ -126,3 +125,5 @@ class ProfileView(LoginRequiredMixin, View):
             messages.error(request, 'Error updating your profile')
             
             return render(request, 'accounts/profile.html', context)
+        
+        

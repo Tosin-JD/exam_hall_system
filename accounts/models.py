@@ -42,7 +42,7 @@ class CustomUser(AbstractUser):
             Profile.objects.create(user=self)
 
     def __str__(self):
-        return self.email
+        return self.username + " " + self.email
 
 
 class Student(CustomUser):
@@ -51,11 +51,13 @@ class Student(CustomUser):
         verbose_name_plural = 'Students'
         
     def save(self, *args, **kwargs):
-        # Set is_staff to True when creating a new user
-        if not self.pk:  # Check if the instance is being created
+        if not self.pk:
             self.is_staff = False
             self.user_type = "Student"
         super().save(*args, **kwargs)
+        
+    def get_absolute_url(self):
+        return reverse("accounts:invigilator_profile", kwargs={"slug": self.slug})
 
 
 class Invigilator(CustomUser):
@@ -71,6 +73,7 @@ class Invigilator(CustomUser):
         
     def get_absolute_url(self):
         return reverse("accounts:invigilator_profile", kwargs={"slug": self.slug})
+    
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
