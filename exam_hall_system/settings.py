@@ -34,7 +34,7 @@ DEBUG = True
 # DEBUG = False
 
 ALLOWED_HOSTS = [
-    '127.0.0.1:8000',
+    '127.0.0.1',
     '.vercel.app',
     '.now.sh',
 ]
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "main",
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

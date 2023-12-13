@@ -38,6 +38,8 @@ class CustomUser(AbstractUser):
         if not self.slug:
             self.slug = slugify(self.username)
         super().save(*args, **kwargs)
+        if not hasattr(self, 'profile'):
+            Profile.objects.create(user=self)
 
     def __str__(self):
         return self.email
@@ -62,11 +64,13 @@ class Invigilator(CustomUser):
         verbose_name_plural = 'Invigilators'
         
     def save(self, *args, **kwargs):
-        # Set is_staff to True when creating a new user
-        if not self.pk:  # Check if the instance is being created
+        if not self.pk:
             self.is_staff = True
             self.user_type = "Invigilator"
         super().save(*args, **kwargs)
+        
+    def get_absolute_url(self):
+        return reverse("accounts:invigilator_profile", kwargs={"slug": self.slug})
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

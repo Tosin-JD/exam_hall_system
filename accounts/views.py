@@ -45,22 +45,20 @@ class InvigilatorSignUpView(CreateView):
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        # Assuming your Student model has a slug field
-        slug = self.object.customuser.slug
-        self.success_url = reverse_lazy('accounts:invigilator_profile',
-                                        kwargs={'slug': slug})
+        slug = self.object.slug
+        self.success_url = reverse_lazy('accounts:invigilator_profile', kwargs={'slug': slug})
         return response
 
 
 class CustomLoginView(LoginView):
     form_class = AuthenticationForm
     template_name = 'login.html'
-    success_url = reverse_lazy('login') 
+    success_url = reverse_lazy('accounts:profile') 
     
     
 class StudentProfileView(LoginRequiredMixin, DetailView):
     model = Student
-    template_name = 'student_profile.html'
+    template_name = 'accounts/student_profile.html'
     context_object_name = 'student'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
@@ -68,7 +66,7 @@ class StudentProfileView(LoginRequiredMixin, DetailView):
 
 class InvigilatorProfileView(LoginRequiredMixin, DetailView):
     model = Invigilator
-    template_name = 'invigilator_profile.html'
+    template_name = 'accounts/invigilator_profile.html'
     context_object_name = 'invigilator'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
@@ -77,8 +75,16 @@ class InvigilatorProfileView(LoginRequiredMixin, DetailView):
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user_form = UserUpdateForm(instance=request.user)
-        profile_form = ProfileUpdateForm(instance=request.user.profile)
         
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            # If the profile does not exist, create one
+            profile = Profile(user=request.user)
+            profile.save()
+
+        profile_form = ProfileUpdateForm(instance=profile)
+
         context = {
             'user_form': user_form,
             'profile_form': profile_form
@@ -91,10 +97,18 @@ class ProfileView(LoginRequiredMixin, View):
             request.POST, 
             instance=request.user
         )
+        
+        try:
+            profile = request.user.profile
+        except Profile.DoesNotExist:
+            # If the profile does not exist, create one
+            profile = Profile(user=request.user)
+            profile.save()
+
         profile_form = ProfileUpdateForm(
             request.POST,
             request.FILES,  # Ensure you include request.FILES here
-            instance=request.user.profile
+            instance=profile
         )
 
         if user_form.is_valid() and profile_form.is_valid():
