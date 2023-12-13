@@ -22,9 +22,9 @@ Django 4.0.0 or a more latest version.
    **Linux**:  
   `source env/bin/activate`  
    **Windows**:  
-   `.\env\Scripts\activate`  
+   `env\Scripts\activate`  
 5. Install Django  
-   `pip install django`   
+   `pip install -r requirements.txt`   
 6. change directory to the folder directory:  
    `cd exam_hall_system`  
 7. run the server from the command line  
