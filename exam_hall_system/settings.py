@@ -32,6 +32,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1:8000',
     '.vercel.app',
+    '.now.sh',
 ]
 
 
@@ -137,7 +138,11 @@ LOGIN_REDIRECT_URL =  '/accounts/profile/'
 
 LOGOUT_REDIRECT_URL = '/'
 
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [BASE_DIR/'static',]
+STATIC_ROOT = BASE_DIR/'staticfiles'
+
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
