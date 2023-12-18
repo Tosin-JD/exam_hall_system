@@ -50,6 +50,9 @@ class Student(CustomUser):
         verbose_name = 'Student'
         verbose_name_plural = 'Students'
         
+    def __str__(self):
+        return self.username
+        
     def save(self, *args, **kwargs):
         if not self.pk:
             self.is_staff = False
@@ -61,6 +64,7 @@ class Student(CustomUser):
 
 
 class Invigilator(CustomUser):
+    hall = models.ForeignKey('main.Hall', on_delete=models.SET_NULL, null=True, blank=True)
     class Meta:
         verbose_name = 'Invigilator'
         verbose_name_plural = 'Invigilators'

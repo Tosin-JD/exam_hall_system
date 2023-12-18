@@ -2,21 +2,25 @@
 
 from django.urls import path
 from .views import (
+    hall_seats_view,
+    AllocateSeatsView,
     CourseCreateView,
     TimeTableCreateView,
     SeatCreateView,
     HallCreateView,
-    assign_students_to_seats_view,
+    AdminDashboardView,
 )
 
 app_name = "main"
 
 urlpatterns = [
-    path('add-course/', CourseCreateView.as_view(), name='create_course'),
+    path('allocated-student-seats/', hall_seats_view, name='allocated_seats'),
+    path('allocate-seats/', AllocateSeatsView.as_view(), name='allocate'),
+    path('courses/', CourseCreateView.as_view(), name='courses'),
     path('add-timetable/', TimeTableCreateView.as_view(), name='create_timetable'),
-    path('add-seat/', SeatCreateView.as_view(), name='create_seat'),
-    path('add-hall/', HallCreateView.as_view(), name='create_hall'),
-    
-    path('assign-students-to-seats/<str:course_code>/', assign_students_to_seats_view, name='assign_students_to_seats'),
-    # Add URL patterns for listing views or any other views you may have
+    path('seats/', SeatCreateView.as_view(), name='seats'),
+    path('halls/', HallCreateView.as_view(), name='halls'),
+    path('timetables/', TimeTableCreateView.as_view(), name='timetables'),
+    path('allotments/', HallCreateView.as_view(), name='allotments'),
+    path('admin/dashboard/', AdminDashboardView.as_view(), name='admin_dashboard'),
 ]

@@ -1,0 +1,21 @@
+<!-- main/templates/allocation.html -->
+{% extends 'main/base.html' %}
+
+{% block title %}Seat Allocation{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% if message %}
+            <p class="text-primary">{{ message }}</p>
+        {% endif %}
+    </div>
+    <div class="container mt-3">
+        <h2 class="mb-4">Seat Allocation Process</h2>
+        <p>This page initiates the seat allocation process. Press the button to start the allocation.</p>
+        
+        <form action="{% url 'main:allocate' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Allocate Seats</button>
+        </form>
+    </div>
+{% endblock %}

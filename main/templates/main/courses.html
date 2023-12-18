@@ -1,0 +1,65 @@
+{% extends 'main/base.html' %}
+
+{% load widget_tweaks %}
+{% block title %}Courses{% endblock%}
+
+{% block content %}
+    <h1>Course List</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="form-container bg-light p-3 rounded border">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="{{ form.name.id_for_label }}">Course Name:</label>
+                            {{ form.name|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.code.id_for_label }}">Course Code:</label>
+                            {{ form.code|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <button type="submit" class="btn btn-primary">Add Course</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-container bg-light p-3 rounded border">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="csv_file">Upload CSV File:</label>
+                        {{ form.csv_file|add_class:"form-control-file" }}
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-success">Import from CSV</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Course Name</th>
+                <th scope="col">Course Code</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ course.name }}</td>
+                    <td>{{ course.code }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

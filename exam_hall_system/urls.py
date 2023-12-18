@@ -23,7 +23,8 @@ from . import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('404-page-not-found/', include('main.urls')), 
+    path('main/', include('main.urls')),
+    # path('404-page-not-found/', include('main.urls')), 
     path('', IndexView.as_view(), name='index'),
     path('about/', AboutView.as_view(), name='about'),
     path('contact', ContactView.as_view(), name='contact'),

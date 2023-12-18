@@ -1,30 +1,49 @@
 # forms.py
 
 from django import forms
-from .models import Course, TimeTable, Seat, Hall
+from .models import Course, Offer, TimeTable, Seat, Hall
 from accounts.models import CustomUser
+
 
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name']
+        fields = ['name', 'code']
+        
+        
+class OfferForm(forms.ModelForm):
+    class Meta:
+        model = Offer
+        fields = ['student', 'course']
+
 
 class TimeTableForm(forms.ModelForm):
     class Meta:
         model = TimeTable
-        fields = ['student', 'course', 'exam_date', 'exam_time']
+        fields = ['course', 'exam_date', 'exam_time']
+
 
 class SeatForm(forms.ModelForm):
     class Meta:
         model = Seat
         fields = ['hall', 'student', 'position_x', 'position_y']
 
+
 class HallForm(forms.ModelForm):
+    invigilators = forms.ModelMultipleChoiceField(
+        queryset=CustomUser.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     class Meta:
         model = Hall
-        fields = ['name', 'invigilators', 'capacity', 'courses']
+        fields = ['name', 'capacity', 'description', 'courses', 
+                  'num_columns', 'num_rows', 'invigilators']
 
-class CustomUserForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['email', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'user_type']
+    def __init__(self, *args, **kwargs):
+        super(HallForm, self).__init__(*args, **kwargs)
+        # Customize the form if needed, for example, you can set a custom label
+        self.fields['name'].label = 'Hall Name'
+
+
