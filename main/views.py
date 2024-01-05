@@ -1,26 +1,57 @@
 # main.views.py
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.views.generic import ListView 
 
 
+
 from django.urls import reverse_lazy
+
 from .models import Course, Offer, TimeTable, Seat, Hall
 from .forms import CourseForm, TimeTableForm, SeatForm, HallForm
 from accounts.models import CustomUser, Student
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 import csv
 from django.views import View
 
+from django.db.models import Count
 import random
+from .utils import get_today_courses, list_to_dict
+
+from datetime import datetime, timedelta
+from datetime import timedelta
+from itertools import combinations, zip_longest
+from .models import Course, Offer, TimeTable
+
+from more_itertools import interleave_evenly, zip_equal
+
+from itertools import groupby
+from operator import itemgetter
+# main/views.py
+from django.shortcuts import render
+from django.views import View
+from .models import Seat, Course, Offer, Hall
+import random
+
+from django.views import View
+from django.shortcuts import render
+from more_itertools import interleave_evenly, chunked
+from random import randrange
 
 # Create your views here.
 
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Retrieve TimeTable data and pass it to the template
+        context['timetable_data'] = TimeTable.objects.all()
+        return context
     
     
 class AboutView(TemplateView):
@@ -33,13 +64,6 @@ class ContactView(TemplateView):
     
 def page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
-
-
-# main/views.py
-from django.shortcuts import render
-from django.views import View
-from .models import Seat, Course, Offer, Hall
-import random
 
 
 def hall_seats_view(request):
@@ -55,6 +79,43 @@ def hall_seats_view(request):
     return render(request, 'main/hall_seats.html', context)
 
 
+# class AllocateSeatsView(View):
+#     template_name = 'main/allocations.html'
+
+#     def get(self, request, *args, **kwargs):
+#         return render(request, self.template_name)
+
+#     def post(self, request, *args, **kwargs):
+#         # Seat.objects.all().update(student=None)
+#         all_halls = Hall.objects.all()
+#         all_courses = Course.objects.all()
+        
+#         students_by_course = {}
+#         for course in all_courses:
+#             students_in_course = Student.objects.filter(offer__course=course)
+#             students_by_course[course.name] = list(students_in_course)
+        
+#         hall_seat_data = {}
+        
+#         for hall in all_halls:
+#             seats_in_hall = Seat.objects.filter(hall=hall)
+#             hall_seat_data[hall] = seats_in_hall
+        
+#         for hall, seats_queryset in hall_seat_data.items():
+#             course, students = next(iter(students_by_course.items()), (None, []))
+            
+#             for seat, student in zip(seats_queryset, students):
+#                 seat.student = student
+            
+#             remaining_seats = seats_queryset[len(students):]
+#             for seat in remaining_seats:
+#                 seat.student = None 
+#             students = students[len(seats_queryset):]
+#             students_by_course[course] = students
+#         context = {'hall_seat_data': hall_seat_data}
+#         return render(request, 'main/hall_seats.html', context)
+    
+    
 class AllocateSeatsView(View):
     template_name = 'main/allocations.html'
 
@@ -63,26 +124,57 @@ class AllocateSeatsView(View):
 
     def post(self, request, *args, **kwargs):
         # Seat.objects.all().update(student=None)
+        
         all_halls = Hall.objects.all()
         all_courses = Course.objects.all()
         
+        courses_today = get_today_courses()
+        
         students_by_course = {}
-        for course in all_courses:
+        stud_by_co = []
+        for course in courses_today:
             students_in_course = Student.objects.filter(offer__course=course)
             students_by_course[course.name] = list(students_in_course)
-
+            stud_by_co.append(tuple(students_in_course))
+            
+        shuffled_students = list(interleave_evenly(stud_by_co))
+        
         hall_seat_data = {}
-
+        
         for hall in all_halls:
             seats_in_hall = Seat.objects.filter(hall=hall)
             hall_seat_data[hall] = seats_in_hall
-        print(hall_seat_data)
+            
         for hall, seats_queryset in hall_seat_data.items():
-            for seat in seats_queryset:
-                for course, students in students_by_course.items():
-                    for student in students:
-                        seat.student = student
-                        seat.save()
+            students = next(iter(stud_by_co))
+            
+            for seat, student in zip(seats_queryset, students):
+                # seat.student = None
+                seat.student = student
+                # seat.save()
+            
+            remaining_seats = seats_queryset[len(students):]
+            for seat in remaining_seats:
+                seat.student = None 
+            students = students[len(seats_queryset):]
+            
+            stud_by_co = []
+            stud_by_co.append(students)
+            # shuffled_students_dict[num] = students
+            
+        # for hall, seats_queryset in hall_seat_data.items():
+        #     course, students = next(iter(students_by_course.items()), (None, []))
+        #     print(students)
+            
+        #     for seat, student in zip(seats_queryset, students):
+        #         seat.student = student
+                # seat.save()
+            
+            # remaining_seats = seats_queryset[len(students):]
+            # for seat in remaining_seats:
+            #     seat.student = None 
+            # students = students[len(seats_queryset):]
+            # students_by_course[course] = students
         context = {'hall_seat_data': hall_seat_data}
         return render(request, 'main/hall_seats.html', context)
     
@@ -105,7 +197,6 @@ class AdminDashboardView(FormView):
 
     def form_valid(self, form):
         form.save()
-        # Additional logic if needed
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -156,6 +247,58 @@ class CourseCreateView(View):
 
         return render(request, self.template_name, {'form': form})
     
+
+class GenerateTimeTableView(View):
+    template_name = 'main/timetables.html'
+    
+    def get(self, request, *args, **kwargs):
+        courses = Course.objects.all()
+        timetable = TimeTable.objects.all()
+        form = CourseForm()
+        return render(request, self.template_name, {'courses': courses, 'timetable':timetable, 'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = TimeTableForm(request.POST)
+        courses = Course.objects.all()
+        offers = Offer.objects.select_related('course__department').all()
+        
+        grouped_courses = Course.objects.values('department').annotate(course_count=Count('id'))
+
+        courses = Course.objects.all().order_by('department')
+
+        # Use groupby to group courses by department
+        # grouped_courses = [list(group) for key, group in groupby(courses, key=itemgetter('department'))]
+
+        course_list = Course.objects.values_list(
+                        'department', flat=True
+                    ).distinct()
+        
+        group_by_department = {}
+        group_list = []
+        for value in course_list:
+            group_by_department[value] = Course.objects.filter(department=value)
+            group_list.append(Course.objects.filter(department=value))
+    
+        exam_date = request.POST.get('exam_date')
+        
+        exam_time = ["08:00:00", "11:00:00", "14:00:00"]
+        count = 0
+        TimeTable.objects.all().delete()
+        for department in zip_longest(*group_by_department.values()):
+            for course in department:
+                if datetime.strptime(exam_date, "%Y-%m-%d").date().weekday() < 6:
+                    randomly_selected_time = random.choice(exam_time)
+                    if course is None:
+                        continue
+                    TimeTable.objects.create(course=course, exam_date=exam_date, exam_time=randomly_selected_time)
+                if (count % 3 == 0):
+                    exam_date = datetime.strptime(exam_date, "%Y-%m-%d").date()
+                    exam_date = str(exam_date + timedelta(days=1))
+                count += 1            
+        timetable = TimeTable.objects.all()
+        context = {'timetable': timetable, 'form':form}
+        return render(request, self.template_name, context)
+
     
 
 class SeatCreateView(View):
@@ -197,7 +340,6 @@ class SeatCreateView(View):
             csv_file = request.FILES['csv_file']
             self.csv_upload(csv_file)
             return redirect('main:seats')
-
         return render(request, self.template_name, {'form': form})
 
 
@@ -252,17 +394,9 @@ class TimeTableCreateView(View):
     template_name = 'main/timetables.html'
 
     def get(self, request, *args, **kwargs):
-        timetable_entries = TimeTable.objects.all()
+        timetable = TimeTable.objects.all()
         form = TimeTableForm()
-        return render(request, self.template_name, {'timetable_entries': timetable_entries, 'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = TimeTableForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('main:timetables')
-
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name, {'timetable': timetable, 'form': form})
 
     def csv_upload(self, csv_file):
         decoded_file = csv_file.read().decode('utf-8').splitlines()
@@ -288,3 +422,27 @@ class TimeTableCreateView(View):
             return redirect('main:timetables')
 
         return render(request, self.template_name, {'form': form})
+
+
+class StudentSeatView(LoginRequiredMixin, TemplateView):
+    template_name = 'main/student_seat.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        student = None
+        student_courses = None
+        assigned_seat = None
+
+        # if self.request.user.is_authenticated and isinstance(self.request.user, Student):
+        if self.request.user.is_authenticated and self.request.user.user_type == "Student":
+            student = get_object_or_404(Student, id=self.request.user.id)
+            student_courses = student.get_courses()
+            student_today_courses = student.get_today_courses()
+            assigned_seat = Seat.objects.filter(student=student).first()
+        context['student'] = student
+        context['student_courses'] = student_courses
+        context['student_today_courses'] = student_today_courses
+        context['assigned_seat'] = assigned_seat
+
+        return context

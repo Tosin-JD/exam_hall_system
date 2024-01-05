@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
+from main.utils import get_today_courses
 
 
 class CustomUserManager(BaseUserManager):
@@ -51,7 +52,47 @@ class Student(CustomUser):
         verbose_name_plural = 'Students'
         
     def __str__(self):
-        return self.username
+        # Get the courses the student is offering
+        today_courses = get_today_courses()
+        all_offers = self.offer.all()
+        # Extract course IDs from today_courses and all_offers
+        today_courses_ids = set(course.id for course in today_courses)
+        all_offers_ids = set(offer.course.id for offer in all_offers)
+
+        # Find common course IDs
+        common_course_ids = today_courses_ids.intersection(all_offers_ids)
+
+        # Filter offers for common courses
+        student_offers = all_offers.filter(course__id__in=common_course_ids)
+        # Extract the course names and join them into a comma-separated string
+        course_names = ", ".join(str(offer.course).upper() for offer in student_offers)
+        # return f"[{self.username}] - Courses: {course_names}"
+        return f"[{self.username}]"
+        
+    def get_today_courses(self):
+        today_courses = get_today_courses()
+        courses_offered = self.get_courses()    
+        print("All offers: ", courses_offered)
+        print("Today courses: ", today_courses)
+        # # Extract course IDs from today_courses and all_offers
+        # today_courses_ids = set(course.id for course in today_courses)
+        # all_offers_ids = set(offer.course.id for offer in all_offers)
+
+        # # Find common course IDs
+        # common_course_ids = today_courses_ids.intersection(all_offers_ids)
+
+        # student_offers = all_offers.filter(course__id__in=common_course_ids)
+        # courses = [offer.course for offer in student_offers]
+        courses = [course for course in today_courses if course in courses_offered]
+        print(courses)
+        return courses
+    
+    def get_courses(self):
+        courses_offered = []
+        all_offers = self.offer.all()
+        for offer in all_offers:
+            courses_offered.append(offer.course)
+        return courses_offered
         
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -60,7 +101,7 @@ class Student(CustomUser):
         super().save(*args, **kwargs)
         
     def get_absolute_url(self):
-        return reverse("accounts:invigilator_profile", kwargs={"slug": self.slug})
+        return reverse("accounts:student_profile", kwargs={"slug": self.slug})
 
 
 class Invigilator(CustomUser):

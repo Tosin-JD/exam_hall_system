@@ -6,11 +6,27 @@
 
 {% block content %}
     <style>
+        body{
+            overflow-x: hidden;
+        }
         .bg-filled{
             background-color: #ccffcc;
         }
+        .hall-container{
+            width:80%;
+            overflow-x:hidden;
+        }
+        .seat-container {
+            width:100%; 
+            display:grid;
+            gap:10px;
+            overflow-x: scroll;
+        }
+        .fill-height{
+            height:100%;
+        }
     </style>
-    <div class="container">
+    <div class="hall-container">
         <h1>Halls and Seats</h1>
 
         {% for hall, seats in hall_seat_data.items %}
@@ -19,16 +35,16 @@
                     {{ hall.name }}
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="seat-container">
                         {% for seat in seats %}
-                            <div class="col-md-2">
+                            <div style="grid-column:{{ seat.position_y }};">
                                 {% if seat.student %}
-                                    <div class="rounded border bg-filled m-1 p-2">
+                                    <div class="rounded border bg-filled p-2 fill-height">
                                         Seat: {{ seat.position_x }}, {{ seat.position_y }}
                                         <span class="bold">{{ seat.student }}</span>
                                     </div>
                                 {% else %}
-                                    <div class="rounded border bg-light m-1 p-2">
+                                    <div class="rounded border bg-light p-2 fill-height">
                                         Seat: {{ seat.position_x }}, {{ seat.position_y }}
                                         <span class="bold">{{ seat.student }}</span>
                                     </div>
@@ -36,9 +52,11 @@
                             </div>
                         {% endfor %}
                     </div>
-                </div>
+                </div>    
             </div>
         {% endfor %}
+        </tbody>
+    </table>
     </div>
-
+                    
 {% endblock content %}

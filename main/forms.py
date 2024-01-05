@@ -8,7 +8,7 @@ from accounts.models import CustomUser
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name', 'code']
+        fields = ['name', 'code', 'department']
         
         
 class OfferForm(forms.ModelForm):

@@ -9,11 +9,6 @@ from exam_hall_system import settings
 from django.contrib.auth.forms import UserChangeForm
 from .models import CustomUser
 
-# class CustomUserCreationForm(UserCreationForm):
-#     class Meta(UserCreationForm.Meta):
-#         model = CustomUser
-#         fields = UserCreationForm.Meta.fields + ("custom_field",)
-
         
 class StudentCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):

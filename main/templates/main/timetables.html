@@ -39,14 +39,26 @@
 
         <div class="col-md-6">
             <div class="form-container bg-light p-3 rounded border">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" action={% url 'main:create_timetable' %}>
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="csv_file">Upload CSV File:</label>
-                        {{ form.csv_file|add_class:"form-control-file" }}
+                        <input class="form-control-file" type="file" name="csv_file" required>
                     </div>
                     <div class="mt-3">
                         <button type="submit" class="btn btn-success">Import from CSV</button>
+                    </div>
+                </form>
+            </div>
+            <div class="form-container bg-light mt-2 p-3 rounded border">
+                <form method="post" action="{% url 'main:generate' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="exam_date">Exam Start Date</label>
+                        <input class="form-control" type="date" name="exam_date" required>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-success">Generate Timetable</button>
                     </div>
                 </form>
             </div>
@@ -63,7 +75,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for entry in timetable_entries %}
+            {% for entry in timetable %}
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
                     <td>{{ entry.course }}</td>

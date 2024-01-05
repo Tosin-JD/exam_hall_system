@@ -29,7 +29,7 @@ class ChooseSignUpView(TemplateView):
 
 class StudentSignUpView(CreateView):
     form_class = StudentCreationForm
-    template_name = 'accounts/signup.html'
+    template_name = 'accounts/student_signup.html'
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -40,7 +40,7 @@ class StudentSignUpView(CreateView):
     
 class InvigilatorSignUpView(CreateView):
     form_class = InvigilatorCreationForm
-    template_name = 'accounts/signup.html'
+    template_name = 'accounts/invigilator_signup.html'
     
     def form_valid(self, form):
         response = super().form_valid(form)

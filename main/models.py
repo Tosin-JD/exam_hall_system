@@ -1,17 +1,18 @@
 # main.models.py
 from django.db import models
-from accounts.models import Student, Invigilator
                         
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=8)
+    department = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
 
+
 class Offer(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey('accounts.Student', on_delete=models.CASCADE, related_name='offer')
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     
     def __str__(self):
@@ -29,7 +30,7 @@ class TimeTable(models.Model):
 
 class Seat(models.Model):
     hall = models.ForeignKey('Hall', on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
+    student = models.ForeignKey('accounts.Student', on_delete=models.CASCADE, null=True, blank=True)
     position_x = models.IntegerField()
     position_y = models.IntegerField()
 
