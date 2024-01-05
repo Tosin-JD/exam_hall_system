@@ -33,7 +33,7 @@ class Command(BaseCommand):
         course20 = Course.objects.create(name='Entrepreneurship', code='EED232', department="General Studies")
 
         student_list = []
-        for i in range(1, 501):
+        for i in range(1, 101):
             username = f'student{i}'
             email = f'student{i}@example.com'
             student = Student.objects.create(username=username, email=email)
