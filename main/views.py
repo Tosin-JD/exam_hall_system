@@ -77,43 +77,6 @@ def hall_seats_view(request):
 
     context = {'hall_seat_data': hall_seat_data}
     return render(request, 'main/hall_seats.html', context)
-
-
-# class AllocateSeatsView(View):
-#     template_name = 'main/allocations.html'
-
-#     def get(self, request, *args, **kwargs):
-#         return render(request, self.template_name)
-
-#     def post(self, request, *args, **kwargs):
-#         # Seat.objects.all().update(student=None)
-#         all_halls = Hall.objects.all()
-#         all_courses = Course.objects.all()
-        
-#         students_by_course = {}
-#         for course in all_courses:
-#             students_in_course = Student.objects.filter(offer__course=course)
-#             students_by_course[course.name] = list(students_in_course)
-        
-#         hall_seat_data = {}
-        
-#         for hall in all_halls:
-#             seats_in_hall = Seat.objects.filter(hall=hall)
-#             hall_seat_data[hall] = seats_in_hall
-        
-#         for hall, seats_queryset in hall_seat_data.items():
-#             course, students = next(iter(students_by_course.items()), (None, []))
-            
-#             for seat, student in zip(seats_queryset, students):
-#                 seat.student = student
-            
-#             remaining_seats = seats_queryset[len(students):]
-#             for seat in remaining_seats:
-#                 seat.student = None 
-#             students = students[len(seats_queryset):]
-#             students_by_course[course] = students
-#         context = {'hall_seat_data': hall_seat_data}
-#         return render(request, 'main/hall_seats.html', context)
     
     
 class AllocateSeatsView(View):
@@ -136,12 +99,13 @@ class AllocateSeatsView(View):
             students_in_course = Student.objects.filter(offer__course=course)
             students_by_course[course.name] = list(students_in_course)
             stud_by_co.append(tuple(students_in_course))
-            
+        
+        
         if not stud_by_co:
             context = {'message': "There are no exams sheduled for today"}
             return render(request, self.template_name, context)
             
-        # shuffled_students = list(interleave_evenly(stud_by_co))
+        shuffled_students = list(interleave_evenly(stud_by_co))
         
         hall_seat_data = {}
         
@@ -149,36 +113,27 @@ class AllocateSeatsView(View):
             seats_in_hall = Seat.objects.filter(hall=hall)
             hall_seat_data[hall] = seats_in_hall
             
+       
         for hall, seats_queryset in hall_seat_data.items():
-            students = next(iter(stud_by_co))
+            students = iter(shuffled_students)
             
-            for seat, student in zip(seats_queryset, students):
-                # seat.student = None
-                seat.student = student
-                # seat.save()
-            
-            remaining_seats = seats_queryset[len(students):]
-            for seat in remaining_seats:
-                seat.student = None 
-            students = students[len(seats_queryset):]
-            
-            stud_by_co = []
-            stud_by_co.append(students)
-            # shuffled_students_dict[num] = students
-            
-        # for hall, seats_queryset in hall_seat_data.items():
-        #     course, students = next(iter(students_by_course.items()), (None, []))
-        #     print(students)
-            
-        #     for seat, student in zip(seats_queryset, students):
-        #         seat.student = student
-                # seat.save()
-            
-            # remaining_seats = seats_queryset[len(students):]
-            # for seat in remaining_seats:
-            #     seat.student = None 
-            # students = students[len(seats_queryset):]
-            # students_by_course[course] = students
+            for seat in seats_queryset:
+                try:
+                    student = next(students)
+                    seat.student = student
+                    seat.save()
+                except StopIteration:
+                    # No more students to assign
+                    seat.student = None
+                    seat.save()
+
+        # If there are remaining students or seats, handle them accordingly
+        remaining_students = list(students)
+        remaining_seats = Seat.objects.filter(hall=hall).exclude(id__in=[seat.id for seat in seats_queryset])
+
+        for seat, student in zip(remaining_seats, remaining_students):
+            seat.student = student
+            seat.save()
         context = {'hall_seat_data': hall_seat_data}
         return render(request, 'main/hall_seats.html', context)
     
@@ -263,22 +218,6 @@ class GenerateTimeTableView(View):
 
     def post(self, request, *args, **kwargs):
         form = TimeTableForm(request.POST)
-        courses = Course.objects.all()
-        offers = Offer.objects.select_related('course__department').all()
-        
-        grouped_courses = Course.objects.values('department').annotate(course_count=Count('id'))
-
-        courses = Course.objects.all().order_by('department')
-        
-        # courses = Course.objects.all().order_by('department__name', 'name')
-
-        # # Assuming you have the models and queryset as defined in the previous answer
-
-        # # Group courses by department
-        # grouped_courses = {}
-        # for department, department_courses in groupby(courses, key=lambda x: x.department):
-        #     grouped_courses[department] = list(department_courses)
-    
         course_list = Course.objects.values_list(
                         'department', flat=True
                     ).distinct()
@@ -292,7 +231,7 @@ class GenerateTimeTableView(View):
         exam_date = request.POST.get('exam_date')
         
         exam_time = ["08:00:00", "11:00:00", "14:00:00"]
-        count = 0
+        count = 1
         TimeTable.objects.all().delete()
         for department in zip_longest(*group_by_department.values()):
             for course in department:
