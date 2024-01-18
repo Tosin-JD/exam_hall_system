@@ -47,6 +47,14 @@ class CustomUser(AbstractUser):
 
 
 class Student(CustomUser):
+    LEVEL_CHOICES = (
+        (100, '100'),
+        (200, '200'),
+        (300, '300'),
+        (400, '400'),
+    )
+    level = models.IntegerField(choices=LEVEL_CHOICES, null=True, blank=True)
+
     class Meta:
         verbose_name = 'Student'
         verbose_name_plural = 'Students'
@@ -66,8 +74,8 @@ class Student(CustomUser):
         student_offers = all_offers.filter(course__id__in=common_course_ids)
         # Extract the course names and join them into a comma-separated string
         course_names = ", ".join(str(offer.course).upper() for offer in student_offers)
-        # return f"[{self.username}] - Courses: {course_names}"
-        return f"[{self.username}]"
+        # return f"[{self.username}]"
+        return f"[{self.username}] - Courses: {course_names}"
         
     def get_today_courses(self):
         today_courses = get_today_courses()

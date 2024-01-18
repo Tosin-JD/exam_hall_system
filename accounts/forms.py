@@ -14,7 +14,7 @@ class StudentCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Student
         fields = UserCreationForm.Meta.fields + ("email", "first_name", "middle_name", 
-                                                 "last_name", "date_of_birth")
+                                                 "last_name", "date_of_birth", 'level')
         
         
 class InvigilatorCreationForm(UserCreationForm):

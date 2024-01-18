@@ -2,13 +2,31 @@
 from django.db import models
                         
 
+from django.db import models
+
+
+class Faculty(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"Faculty of {self.name}"
+    
+
+class Department(models.Model):
+    name = models.CharField(max_length=50)
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Department of {self.name}"
+
+
 class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=8)
-    department = models.CharField(max_length=50)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
 
 class Offer(models.Model):

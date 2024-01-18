@@ -1,6 +1,6 @@
 # main/management/commands/populate_sample_data.py
 from django.core.management.base import BaseCommand
-from main.models import Course, Offer, Hall, Seat, TimeTable
+from main.models import Faculty, Department, Course, Offer, Hall, Seat, TimeTable
 from accounts.models import Student, Invigilator
 from django.utils import timezone
 import random
@@ -10,27 +10,47 @@ class Command(BaseCommand):
     help = 'Populate the database with sample data'
 
     def handle(self, *args, **kwargs):
+        # Create sample faculties
+        faculty1 = Faculty.objects.create(name='Arts and Humanities')
+        faculty2 = Faculty.objects.create(name='Science')
+        faculty3 = Faculty.objects.create(name='Social Sciences')
+        
+        department1 = Department.objects.create(name='Literature', faculty=faculty1)
+        department2 = Department.objects.create(name='Physics', faculty=faculty2)
+        department3 = Department.objects.create(name='Sociology', faculty=faculty3)
+        department4 = Department.objects.create(name='Chemistry', faculty=faculty2)
+        department5 = Department.objects.create(name='Mathematics', faculty=faculty2)
+        
         # Create sample courses
-        course1 = Course.objects.create(name='Mathematics', code='MTH177', department="Mathematics")
-        course2 = Course.objects.create(name='Logic', code='MTH141', department="Mathematics")
-        course3 = Course.objects.create(name='Statistics', code='MTH201', department="Mathematics")
-        course4 = Course.objects.create(name='Probality', code='MTH111', department="Mathematics")
-        course5 = Course.objects.create(name='Physics', code='PHYS101', department="Physics")
-        course6 = Course.objects.create(name='Computer Science', code='CS101', department="Mathematics")
-        course7 = Course.objects.create(name='Biology', code='BIO101', department="Biology")
-        course8 = Course.objects.create(name='Chemistry', code='CHM101', department="Chemistry")
-        course9 = Course.objects.create(name='Food Technology', code='FTH101', department="Food Technology")
-        course10 = Course.objects.create(name='Electrical Engineering', code='EEG101', department="Electrical Engineering")
-        course11 = Course.objects.create(name='Science Lab Tech', code='SLT101', department="Science Lab Tech")
-        course12 = Course.objects.create(name='Mechanical Engineering', code='MEG101', department="Mechanical Engineering")
-        course13 = Course.objects.create(name='Agricultural Science', code='AGS101', department="Agriculture")
-        course14 = Course.objects.create(name='Medicine', code='MMD101', department="Medicine")
-        course15 = Course.objects.create(name='Office Technology', code='OTM101', department="Office Technology")
-        course16 = Course.objects.create(name='Banking and Finance', code='BFN101', department="Banking")
-        course17 = Course.objects.create(name='Accounting', code='ACC101', department="Account")
-        course18 = Course.objects.create(name='History', code='HST101', department="Art")
-        course19 = Course.objects.create(name='Government', code='GST201', department="Art")
-        course20 = Course.objects.create(name='Entrepreneurship', code='EED232', department="General Studies")
+        course1 = Course.objects.create(name='Introduction to Literary Analysis', code='LIT101', department= department1)
+        course2 = Course.objects.create(name='American Literature Survey', code='LIT201', department= department1)
+        course3 = Course.objects.create(name='British Romantic Poetry', code='LIT301', department= department1)
+        course4 = Course.objects.create(name='Contemporary World Fiction', code='LIT401', department= department1)
+        course5 = Course.objects.create(name='Shakespearean Tragedies', code='LIT501', department= department1)
+        
+        course6 = Course.objects.create(name='Classical Mechanics', code='PHY101', department=department2)
+        course7 = Course.objects.create(name='Quantum Mechanics', code='PHY201', department=department2)
+        course8 = Course.objects.create(name='Electromagnetism', code='PHY301', department=department2)
+        course9 = Course.objects.create(name='Thermodynamics and Statistical Mechanics', code='PHY401', department=department2)
+        course10 = Course.objects.create(name='Astrophysics', code='PHY501', department=department2)
+        
+        course11 = Course.objects.create(name='General Chemistry', code='CHEM101', department=department4)
+        course12 = Course.objects.create(name='Organic Chemistry', code='CHEM201', department=department4)
+        course13 = Course.objects.create(name='Inorganic Chemistry', code='CHEM301', department=department4)
+        course14 = Course.objects.create(name='Physical Chemistry', code='CHEM401', department=department4)
+        course15 = Course.objects.create(name='Analytical Chemistry', code='CHEM501', department=department4)
+        
+        course16 = Course.objects.create(name='Calculus I', code='MATH101', department=department5)
+        course17 = Course.objects.create(name='Linear Algebra', code='MATH201', department=department5)
+        course18 = Course.objects.create(name='Differential Equations', code='MATH301', department=department5)
+        course19 = Course.objects.create(name='Abstract Algebra', code='MATH401', department=department5)
+        course20 = Course.objects.create(name='Real Analysis', code='MATH501', department=department5)
+        
+        course21 = Course.objects.create(name='Introduction to Sociology', code='SOC101', department=department_of_sociology)
+        course22 = Course.objects.create(name='Social Research Methods', code='SOC201', department=department_of_sociology)
+        course23 = Course.objects.create(name='Gender and Society', code='SOC301', department=department_of_sociology)
+        course24 = Course.objects.create(name='Sociology of Deviance', code='SOC401', department=department_of_sociology)
+        course25 = Course.objects.create(name='Contemporary Social Issues', code='SOC501', department=department_of_sociology)
 
         student_list = []
         for i in range(1, 101):
@@ -63,24 +83,29 @@ class Command(BaseCommand):
         courses = [course1, course2, course3, course4, course5, 
                    course6, course7, course8, course9, course10,
                    course11, course12, course13, course14, course15,
-                   course16, course17, course18, course19, course20,]
+                   course16, course17, course18, course19, course20,
+                   course21, course22, course23, course24, course25, ]
 
         # Create sample student offer
-        for student in student_list:
-            # Decide the number of courses for the student
-            num_courses = random.choice([3, 3, 3])  # 0.3 chance of 2, 0.3 chance of 2, and 0.4 chance of 3
+        # for student in student_list:
+        #     # Decide the number of courses for the student
+        #     num_courses = random.choice([5, 5, 3])  # 0.3 chance of 2, 0.3 chance of 2, and 0.4 chance of 3
             
-            # Shuffle the courses list and take the first 'num_courses'
-            selected_courses = random.sample(courses, num_courses)
+        #     # Shuffle the courses list and take the first 'num_courses'
+        #     selected_courses = random.sample(courses, num_courses)
             
-            for course in selected_courses:
+        #     for course in selected_courses:
+        #         Offer.objects.create(course=course, student=student)
                 
+        # Create sample student offer
+        for student in student_list:
+            for course in courses:
                 Offer.objects.create(course=course, student=student)
                 
                 
         # Create sample timetable entries
         courses = Course.objects.all()
-        exam_date = "2023-12-21"
+        exam_date = "2024-01-17"
         exam_time = ["08:00:00", "11:00:00", "14:00:00"]
         count = 0
         for course in courses:

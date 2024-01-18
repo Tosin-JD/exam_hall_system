@@ -137,7 +137,11 @@ class AllocateSeatsView(View):
             students_by_course[course.name] = list(students_in_course)
             stud_by_co.append(tuple(students_in_course))
             
-        shuffled_students = list(interleave_evenly(stud_by_co))
+        if not stud_by_co:
+            context = {'message': "There are no exams sheduled for today"}
+            return render(request, self.template_name, context)
+            
+        # shuffled_students = list(interleave_evenly(stud_by_co))
         
         hall_seat_data = {}
         
@@ -265,10 +269,16 @@ class GenerateTimeTableView(View):
         grouped_courses = Course.objects.values('department').annotate(course_count=Count('id'))
 
         courses = Course.objects.all().order_by('department')
+        
+        # courses = Course.objects.all().order_by('department__name', 'name')
 
-        # Use groupby to group courses by department
-        # grouped_courses = [list(group) for key, group in groupby(courses, key=itemgetter('department'))]
+        # # Assuming you have the models and queryset as defined in the previous answer
 
+        # # Group courses by department
+        # grouped_courses = {}
+        # for department, department_courses in groupby(courses, key=lambda x: x.department):
+        #     grouped_courses[department] = list(department_courses)
+    
         course_list = Course.objects.values_list(
                         'department', flat=True
                     ).distinct()

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "accounts",
     "main",
     'widget_tweaks',
+    # 'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -163,6 +164,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
 DATE_INPUT_FORMATS = ('%Y-%m-%d','%d-%m-%Y')
+
+# GRAPH_MODELS = {
+#   'all_applications': True,
+#   'group_models': True,
+# }
 
 
 
