@@ -9,29 +9,22 @@ from django.views.generic import ListView
 
 from django.urls import reverse_lazy
 
-from .models import Course, Offer, TimeTable, Seat, Hall
+from .models import Course, TimeTable, Seat, Hall
 from .forms import CourseForm, TimeTableForm, SeatForm, HallForm
-from accounts.models import CustomUser, Student
-from django.contrib.auth.mixins import UserPassesTestMixin
+from accounts.models import Student
 from django.contrib.auth.mixins import LoginRequiredMixin
 import csv
-from django.views import View
 
-from django.db.models import Count
 import random
-from .utils import get_today_courses, list_to_dict
+from .utils import get_today_courses
 
 from datetime import datetime, timedelta
 from datetime import timedelta
-from itertools import combinations, zip_longest
+from itertools import zip_longest
 from .models import Course, TimeTable, Seat, Course, Hall
 
-from more_itertools import interleave_evenly, zip_equal
+from more_itertools import interleave_evenly
 
-from itertools import groupby
-from operator import itemgetter
-
-from django.shortcuts import render
 import random
 
 from django.views import View
@@ -246,22 +239,28 @@ class GenerateTimeTableView(AdminRequiredMixin, View):
                 count += 1            
         timetable = TimeTable.objects.all()
         context = {'timetable': timetable, 'form':form}
-        return render(request, self.template_name, context)
-
+        return render(request, self.template_name, context)    
     
-
-class SeatCreateView(AdminRequiredMixin, View):
+    
+class SeatView(View):
     template_name = 'main/seats.html'
 
     def get(self, request, *args, **kwargs):
         seats = Seat.objects.all()
         form = SeatForm()
-        return render(request, self.template_name, {'seats': seats, 'form': form})
+        context = {'seats': seats, 'form': form}
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = SeatForm(request.POST)
+
         if form.is_valid():
             form.save()
+            return redirect('main:seats')
+
+        if 'csv_file' in request.FILES:
+            csv_file = request.FILES['csv_file']
+            self.csv_upload(csv_file)
             return redirect('main:seats')
 
         return render(request, self.template_name, {'form': form})
@@ -277,19 +276,6 @@ class SeatCreateView(AdminRequiredMixin, View):
                 position_x=row['position_x'],
                 position_y=row['position_y']
             )
-
-    def post(self, request, *args, **kwargs):
-        form = SeatForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return redirect('main:seats')
-
-        if 'csv_file' in request.FILES:
-            csv_file = request.FILES['csv_file']
-            self.csv_upload(csv_file)
-            return redirect('main:seats')
-        return render(request, self.template_name, {'form': form})
 
 
 class HallCreateView(AdminRequiredMixin, View):

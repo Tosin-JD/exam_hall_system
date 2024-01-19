@@ -65,7 +65,7 @@ class Command(BaseCommand):
         }
 
         student_list = []
-        for i in range(1, 101):
+        for i in range(1, 501):
             username = f'student{i}'
             email = f'student{i}@example.com'
             password = make_password(username)  # Hash the username to set as the password
@@ -104,13 +104,13 @@ class Command(BaseCommand):
                    course21, course22, course23, course24, course25, ]
         
         for i, student in enumerate(student_list):
-            if i < 20:
+            if i < 100:
                 student.department = department1
-            elif i < 40:
+            elif i < 200:
                 student.department = department2
-            elif i < 60:
+            elif i < 300:
                 student.department = department3
-            elif i < 80:
+            elif i < 400:
                 student.department = department4
             else:
                 student.department = department5
@@ -133,7 +133,7 @@ class Command(BaseCommand):
         for value in course_list:
             group_by_department[value] = Course.objects.filter(department=value)
             group_list.append(Course.objects.filter(department=value))
-        exam_date = "2024-01-18"
+        exam_date = "2024-01-19"
         exam_time = ["08:00:00", "11:00:00", "14:00:00"]
         count = 1
         TimeTable.objects.all().delete()
