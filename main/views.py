@@ -24,23 +24,23 @@ from .utils import get_today_courses, list_to_dict
 from datetime import datetime, timedelta
 from datetime import timedelta
 from itertools import combinations, zip_longest
-from .models import Course, Offer, TimeTable
+from .models import Course, TimeTable, Seat, Course, Hall
 
 from more_itertools import interleave_evenly, zip_equal
 
 from itertools import groupby
 from operator import itemgetter
-# main/views.py
+
 from django.shortcuts import render
-from django.views import View
-from .models import Seat, Course, Offer, Hall
 import random
 
 from django.views import View
 from django.shortcuts import render
-from more_itertools import interleave_evenly, chunked
-from random import randrange
+from more_itertools import interleave_evenly
 
+
+    
+from .mixins import AdminRequiredMixin
 # Create your views here.
 
 
@@ -77,9 +77,9 @@ def hall_seats_view(request):
 
     context = {'hall_seat_data': hall_seat_data}
     return render(request, 'main/hall_seats.html', context)
-    
-    
-class AllocateSeatsView(View):
+
+
+class AllocateSeatsView(AdminRequiredMixin, View):
     template_name = 'main/allocations.html'
 
     def get(self, request, *args, **kwargs):
@@ -138,7 +138,7 @@ class AllocateSeatsView(View):
         return render(request, 'main/hall_seats.html', context)
     
     
-class AdminDashboardView(FormView):
+class AdminDashboardView(AdminRequiredMixin, FormView):
     template_name = 'main/admin_dashboard.html'
     form_class = CourseForm 
     success_url = '/admin/dashboard/'
@@ -169,7 +169,7 @@ class AdminDashboardView(FormView):
         return super().dispatch(request, *args, **kwargs)
     
 
-class CourseCreateView(View):
+class CourseCreateView(AdminRequiredMixin, View):
     template_name = 'main/courses.html'
 
     def get(self, request, *args, **kwargs):
@@ -207,7 +207,7 @@ class CourseCreateView(View):
         return render(request, self.template_name, {'form': form})
     
 
-class GenerateTimeTableView(View):
+class GenerateTimeTableView(AdminRequiredMixin, View):
     template_name = 'main/timetables.html'
     
     def get(self, request, *args, **kwargs):
@@ -250,7 +250,7 @@ class GenerateTimeTableView(View):
 
     
 
-class SeatCreateView(View):
+class SeatCreateView(AdminRequiredMixin, View):
     template_name = 'main/seats.html'
 
     def get(self, request, *args, **kwargs):
@@ -292,7 +292,7 @@ class SeatCreateView(View):
         return render(request, self.template_name, {'form': form})
 
 
-class HallCreateView(View):
+class HallCreateView(AdminRequiredMixin, View):
     template_name = 'main/halls.html'
 
     def get(self, request, *args, **kwargs):
@@ -339,7 +339,7 @@ class HallCreateView(View):
         return render(request, self.template_name, {'form': form})
     
 
-class TimeTableCreateView(View):
+class TimeTableCreateView(AdminRequiredMixin, View):
     template_name = 'main/timetables.html'
 
     def get(self, request, *args, **kwargs):

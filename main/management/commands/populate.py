@@ -65,12 +65,13 @@ class Command(BaseCommand):
         }
 
         student_list = []
-        for i in range(1, 501):
+        for i in range(1, 101):
             username = f'student{i}'
             email = f'student{i}@example.com'
             password = make_password(username)  # Hash the username to set as the password
             student = Student.objects.create(username=username, email=email, password=password)
             student_list.append(student)
+            self.stdout.write(self.style.SUCCESS(f'{student} created successfully'))
         self.stdout.write(self.style.SUCCESS('Students created successfully'))
 
         # Create sample halls
@@ -93,6 +94,7 @@ class Command(BaseCommand):
             for i in range(1, hall.num_columns + 1):
                 for j in range(1, hall.num_rows + 1):
                     Seat.objects.create(hall=hall, position_x=i, position_y=j)
+            self.stdout.write(self.style.SUCCESS(f'{hall}created successfully'))
         self.stdout.write(self.style.SUCCESS('Seats created successfully'))
                     
         courses = [course1, course2, course3, course4, course5, 
@@ -102,13 +104,13 @@ class Command(BaseCommand):
                    course21, course22, course23, course24, course25, ]
         
         for i, student in enumerate(student_list):
-            if i < 100:
+            if i < 20:
                 student.department = department1
-            elif i < 200:
+            elif i < 40:
                 student.department = department2
-            elif i < 300:
+            elif i < 60:
                 student.department = department3
-            elif i < 400:
+            elif i < 80:
                 student.department = department4
             else:
                 student.department = department5
