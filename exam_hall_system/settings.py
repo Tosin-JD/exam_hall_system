@@ -170,6 +170,7 @@ DATE_INPUT_FORMATS = ('%Y-%m-%d','%d-%m-%Y')
 #   'group_models': True,
 # }
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
 
 
 
